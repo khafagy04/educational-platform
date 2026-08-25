@@ -1,0 +1,60 @@
+name: educational-platform-prod
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    env_file: ${ENV_FILE:-.env.production}
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: &production-logs
+      driver: json-file
+      options: { max-size: '10m', max-file: '5' }
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes', '--requirepass', '${REDIS_PASSWORD}']
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli -a "$${REDIS_PASSWORD}" ping | grep PONG']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: *production-logs
+  backend:
+    image: ${BACKEND_IMAGE}
+    restart: unless-stopped
+    env_file: ${ENV_FILE:-.env.production}
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:4000/api/v1/health/ready']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    logging: *production-logs
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    restart: unless-stopped
+    env_file: ${ENV_FILE:-.env.production}
+    depends_on:
+      backend: { condition: service_healthy }
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    logging: *production-logs
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    env_file: ${ENV_FILE:-.env.production}
+    ports: ['80:80', '443:443']
+    volumes: ['./Caddyfile:/etc/caddy/Caddyfile:ro', 'caddy-data:/data', 'caddy-config:/config']
+    depends_on: [frontend, backend]
+    logging: *production-logs
+volumes: { postgres-data: {}, redis-data: {}, caddy-data: {}, caddy-config: {} }

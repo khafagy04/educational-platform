@@ -1,0 +1,822 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum VerificationTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum EducationStage {
+  PRIMARY
+  PREPARATORY
+  SECONDARY
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum LessonType {
+  VIDEO
+  PDF
+  QUIZ
+  TEXT
+}
+
+enum VideoProvider {
+  CLOUDFLARE_STREAM
+  BUNNY_STREAM
+}
+
+enum VideoStatus {
+  UPLOADING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+}
+
+enum PaymentProvider {
+  WALLET
+  FAWATERK
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+}
+
+enum WalletTransactionType {
+  TOP_UP
+  COURSE_PURCHASE
+  ADMIN_ADJUSTMENT
+}
+
+enum WalletTransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum WebhookEventStatus {
+  RECEIVED
+  PROCESSED
+  IGNORED
+  FAILED
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  EXPIRED
+  COMPLETED
+}
+
+enum QuizStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum QuestionType {
+  MCQ
+  ESSAY
+}
+
+enum QuizAttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  PENDING_REVIEW
+  GRADED
+  EXPIRED
+}
+
+enum CertificateStatus {
+  PENDING
+  GENERATED
+  FAILED
+}
+
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  PAYMENT_CONFIRMED
+  COURSE_UPDATED
+  QUIZ_GRADED
+  CERTIFICATE_ISSUED
+  GENERIC
+}
+
+model User {
+  id              String     @id @default(uuid()) @db.Uuid
+  name            String     @db.VarChar(160)
+  email           String     @unique @db.VarChar(320)
+  phone           String?    @unique @db.VarChar(32)
+  parentPhone     String?    @db.VarChar(32)
+  governorate     String?    @db.VarChar(100)
+  school          String?    @db.VarChar(200)
+  passwordHash    String     @db.VarChar(255)
+  role            UserRole   @default(STUDENT)
+  status          UserStatus @default(ACTIVE)
+  gradeId         String?    @db.Uuid
+  avatarFileKey   String?    @db.VarChar(500)
+  emailVerifiedAt DateTime?  @db.Timestamptz(3)
+  suspendedAt     DateTime?  @db.Timestamptz(3)
+  createdAt       DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime   @updatedAt @db.Timestamptz(3)
+
+  grade                  Grade?                  @relation(fields: [gradeId], references: [id], onDelete: SetNull)
+  wallet                 Wallet?
+  verificationTokens     VerificationToken[]
+  refreshTokens          RefreshToken[]
+  createdCourses         Course[]                @relation("CourseCreator")
+  orders                 Order[]
+  payments               Payment[]
+  enrollments            Enrollment[]
+  favorites              CourseFavorite[]
+  courseViews            CourseView[]
+  quizAttempts           QuizAttempt[]
+  gradedAnswers          AttemptAnswer[]         @relation("AnswerGrader")
+  certificates           Certificate[]
+  testimonials           Testimonial[]           @relation("TestimonialAuthor")
+  moderatedTestimonials  Testimonial[]           @relation("TestimonialModerator")
+  notifications          Notification[]
+  notificationPreference NotificationPreference?
+  learningActivities     LearningActivity[]
+  updatedSettings        PlatformSetting[]       @relation("SettingUpdater")
+  auditLogs              AuditLog[]              @relation("AuditActor")
+
+  @@index([gradeId])
+  @@index([role, status])
+  @@index([createdAt])
+}
+
+model VerificationToken {
+  id        String                @id @default(uuid()) @db.Uuid
+  userId    String                @db.Uuid
+  tokenHash String                @unique @db.VarChar(128)
+  type      VerificationTokenType
+  expiresAt DateTime              @db.Timestamptz(3)
+  usedAt    DateTime?             @db.Timestamptz(3)
+  createdAt DateTime              @default(now()) @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@index([expiresAt])
+}
+
+model RefreshToken {
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String    @db.Uuid
+  tokenHash    String    @unique @db.VarChar(128)
+  familyId     String    @db.Uuid
+  replacedById String?   @unique @db.Uuid
+  deviceInfo   String?   @db.VarChar(500)
+  ipAddress    String?   @db.VarChar(64)
+  expiresAt    DateTime  @db.Timestamptz(3)
+  revokedAt    DateTime? @db.Timestamptz(3)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replacedBy RefreshToken?  @relation("RefreshRotation", fields: [replacedById], references: [id], onDelete: SetNull)
+  replaces   RefreshToken[] @relation("RefreshRotation")
+
+  @@index([userId, expiresAt])
+  @@index([familyId])
+}
+
+model Grade {
+  id        String         @id @default(uuid()) @db.Uuid
+  name      String         @db.VarChar(120)
+  slug      String         @unique @db.VarChar(140)
+  stage     EducationStage
+  sortOrder Int
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime       @updatedAt @db.Timestamptz(3)
+
+  users    User[]
+  subjects Subject[]
+  courses  Course[]
+
+  @@unique([stage, sortOrder])
+  @@index([isActive, sortOrder])
+}
+
+model Subject {
+  id        String   @id @default(uuid()) @db.Uuid
+  gradeId   String   @db.Uuid
+  name      String   @db.VarChar(120)
+  slug      String   @db.VarChar(140)
+  sortOrder Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  grade   Grade    @relation(fields: [gradeId], references: [id], onDelete: Restrict)
+  courses Course[]
+
+  @@unique([gradeId, slug])
+  @@unique([gradeId, sortOrder])
+  @@index([gradeId, isActive])
+}
+
+model Course {
+  id                 String       @id @default(uuid()) @db.Uuid
+  gradeId            String       @db.Uuid
+  subjectId          String       @db.Uuid
+  createdById        String       @db.Uuid
+  title              String       @db.VarChar(220)
+  slug               String       @unique @db.VarChar(240)
+  description        String       @db.Text
+  price              Decimal      @db.Decimal(12, 2)
+  currency           String       @default("EGP") @db.Char(3)
+  thumbnailFileKey   String?      @db.VarChar(500)
+  accessDurationDays Int          @default(365)
+  status             CourseStatus @default(DRAFT)
+  publishedAt        DateTime?    @db.Timestamptz(3)
+  createdAt          DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime     @updatedAt @db.Timestamptz(3)
+
+  grade        Grade            @relation(fields: [gradeId], references: [id], onDelete: Restrict)
+  subject      Subject          @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  createdBy    User             @relation("CourseCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  modules      CourseModule[]
+  orders       Order[]
+  enrollments  Enrollment[]
+  favorites    CourseFavorite[]
+  views        CourseView[]
+  certificates Certificate[]
+  testimonials Testimonial[]
+
+  @@index([gradeId, subjectId, status])
+  @@index([status, publishedAt])
+  @@index([status, price, publishedAt])
+  @@index([price])
+  @@index([createdById])
+}
+
+model CourseModule {
+  id          String   @id @default(uuid()) @db.Uuid
+  courseId    String   @db.Uuid
+  title       String   @db.VarChar(220)
+  description String?  @db.Text
+  sortOrder   Int
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+  quizzes Quiz[]
+
+  @@unique([courseId, sortOrder])
+  @@index([courseId])
+}
+
+model Lesson {
+  id          String     @id @default(uuid()) @db.Uuid
+  moduleId    String     @db.Uuid
+  title       String     @db.VarChar(220)
+  slug        String     @db.VarChar(240)
+  description String?    @db.Text
+  type        LessonType
+  textContent String?    @db.Text
+  durationSec Int?
+  isFree      Boolean    @default(false)
+  isRequired  Boolean    @default(true)
+  sortOrder   Int
+  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime   @updatedAt @db.Timestamptz(3)
+
+  module      CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  video       Video?
+  attachments Attachment[]
+  progress    LessonProgress[]
+  quiz        Quiz?
+
+  @@unique([moduleId, slug])
+  @@unique([moduleId, sortOrder])
+  @@index([moduleId, type])
+}
+
+model Video {
+  id              String        @id @default(uuid()) @db.Uuid
+  lessonId        String        @unique @db.Uuid
+  provider        VideoProvider
+  providerVideoId String        @db.VarChar(255)
+  status          VideoStatus   @default(UPLOADING)
+  durationSec     Int?
+  errorMessage    String?       @db.Text
+  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime      @updatedAt @db.Timestamptz(3)
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerVideoId])
+  @@index([status])
+}
+
+model Attachment {
+  id        String   @id @default(uuid()) @db.Uuid
+  lessonId  String   @db.Uuid
+  title     String   @db.VarChar(220)
+  fileKey   String   @unique @db.VarChar(500)
+  mimeType  String   @db.VarChar(150)
+  sizeBytes BigInt
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, sortOrder])
+  @@index([lessonId])
+}
+
+model Wallet {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @db.Uuid
+  balance   Decimal  @default(0) @db.Decimal(12, 2)
+  currency  String   @default("EGP") @db.Char(3)
+  version   Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+}
+
+model WalletTransaction {
+  id                String                  @id @default(uuid()) @db.Uuid
+  walletId          String                  @db.Uuid
+  orderId           String?                 @db.Uuid
+  paymentId         String?                 @unique @db.Uuid
+  type              WalletTransactionType
+  status            WalletTransactionStatus @default(PENDING)
+  amount            Decimal                 @db.Decimal(12, 2)
+  currency          String                  @default("EGP") @db.Char(3)
+  balanceAfter      Decimal?                @db.Decimal(12, 2)
+  providerReference String?                 @unique @db.VarChar(255)
+  idempotencyKey    String?                 @unique @db.VarChar(255)
+  description       String?                 @db.VarChar(500)
+  completedAt       DateTime?               @db.Timestamptz(3)
+  createdAt         DateTime                @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime                @updatedAt @db.Timestamptz(3)
+
+  wallet        Wallet                @relation(fields: [walletId], references: [id], onDelete: Restrict)
+  order         Order?                @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  payment       Payment?              @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  webhookEvents PaymentWebhookEvent[]
+
+  @@index([walletId, createdAt])
+  @@index([status, createdAt])
+  @@index([orderId])
+}
+
+model Order {
+  id                  String      @id @default(uuid()) @db.Uuid
+  userId              String      @db.Uuid
+  courseId            String      @db.Uuid
+  status              OrderStatus @default(PENDING)
+  amount              Decimal     @db.Decimal(12, 2)
+  currency            String      @default("EGP") @db.Char(3)
+  courseTitleSnapshot String      @db.VarChar(220)
+  idempotencyKey      String?     @unique @db.VarChar(255)
+  expiresAt           DateTime?   @db.Timestamptz(3)
+  paidAt              DateTime?   @db.Timestamptz(3)
+  createdAt           DateTime    @default(now()) @db.Timestamptz(3)
+  updatedAt           DateTime    @updatedAt @db.Timestamptz(3)
+
+  user               User                @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course             Course              @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  payments           Payment[]
+  walletTransactions WalletTransaction[]
+  enrollment         Enrollment?
+
+  @@index([userId, createdAt])
+  @@index([courseId, status])
+  @@index([status, createdAt])
+}
+
+model Payment {
+  id                String          @id @default(uuid()) @db.Uuid
+  userId            String          @db.Uuid
+  orderId           String?         @db.Uuid
+  provider          PaymentProvider
+  status            PaymentStatus   @default(PENDING)
+  amount            Decimal         @db.Decimal(12, 2)
+  currency          String          @default("EGP") @db.Char(3)
+  providerPaymentId String?         @unique @db.VarChar(255)
+  providerSessionId String?         @unique @db.VarChar(255)
+  failureCode       String?         @db.VarChar(120)
+  failureMessage    String?         @db.VarChar(500)
+  paidAt            DateTime?       @db.Timestamptz(3)
+  createdAt         DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(3)
+
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  order             Order?                @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  walletTransaction WalletTransaction?
+  webhookEvents     PaymentWebhookEvent[]
+
+  @@index([userId, createdAt])
+  @@index([orderId])
+  @@index([provider, status, createdAt])
+}
+
+model PaymentWebhookEvent {
+  id                  String             @id @default(uuid()) @db.Uuid
+  provider            PaymentProvider
+  providerEventId     String             @db.VarChar(255)
+  paymentId           String?            @db.Uuid
+  walletTransactionId String?            @db.Uuid
+  status              WebhookEventStatus @default(RECEIVED)
+  payloadHash         String             @db.VarChar(128)
+  eventType           String             @db.VarChar(160)
+  failureReason       String?            @db.Text
+  receivedAt          DateTime           @default(now()) @db.Timestamptz(3)
+  processedAt         DateTime?          @db.Timestamptz(3)
+
+  payment           Payment?           @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  walletTransaction WalletTransaction? @relation(fields: [walletTransactionId], references: [id], onDelete: SetNull)
+
+  @@unique([provider, providerEventId])
+  @@index([status, receivedAt])
+  @@index([paymentId])
+  @@index([walletTransactionId])
+}
+
+model Enrollment {
+  id             String           @id @default(uuid()) @db.Uuid
+  userId         String           @db.Uuid
+  courseId       String           @db.Uuid
+  orderId        String           @unique @db.Uuid
+  status         EnrollmentStatus @default(ACTIVE)
+  purchasedPrice Decimal          @db.Decimal(12, 2)
+  currency       String           @default("EGP") @db.Char(3)
+  startsAt       DateTime         @default(now()) @db.Timestamptz(3)
+  expiresAt      DateTime         @db.Timestamptz(3)
+  completedAt    DateTime?        @db.Timestamptz(3)
+  createdAt      DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime         @updatedAt @db.Timestamptz(3)
+
+  user         User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course       Course           @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  order        Order            @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  progress     LessonProgress[]
+  quizAttempts QuizAttempt[]
+  certificate  Certificate?
+
+  @@index([userId, courseId, status])
+  @@index([status, expiresAt])
+  @@index([courseId, status])
+}
+
+model LessonProgress {
+  id              String    @id @default(uuid()) @db.Uuid
+  enrollmentId    String    @db.Uuid
+  lessonId        String    @db.Uuid
+  progressPct     Decimal   @default(0) @db.Decimal(5, 2)
+  lastPositionSec Int       @default(0)
+  watchedSeconds  Int       @default(0)
+  completed       Boolean   @default(false)
+  completedAt     DateTime? @db.Timestamptz(3)
+  firstViewedAt   DateTime  @default(now()) @db.Timestamptz(3)
+  lastViewedAt    DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(3)
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson     Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([enrollmentId, lessonId])
+  @@index([lessonId, completed])
+  @@index([lastViewedAt])
+}
+
+model CourseFavorite {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  courseId  String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+}
+
+model CourseView {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @db.Uuid
+  courseId      String   @db.Uuid
+  viewCount     Int      @default(1)
+  firstViewedAt DateTime @default(now()) @db.Timestamptz(3)
+  lastViewedAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId, lastViewedAt])
+  @@index([courseId, viewCount])
+  @@index([courseId, lastViewedAt])
+}
+
+model LearningActivity {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @db.Uuid
+  activityDate     DateTime @db.Date
+  watchedSeconds   Int      @default(0)
+  lessonsCompleted Int      @default(0)
+  quizzesSubmitted Int      @default(0)
+  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityDate])
+  @@index([activityDate])
+}
+
+model Quiz {
+  id           String     @id @default(uuid()) @db.Uuid
+  moduleId     String?    @db.Uuid
+  lessonId     String?    @unique @db.Uuid
+  title        String     @db.VarChar(220)
+  description  String?    @db.Text
+  timeLimitSec Int?
+  passingScore Decimal    @db.Decimal(5, 2)
+  maxAttempts  Int        @default(1)
+  status       QuizStatus @default(DRAFT)
+  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @db.Timestamptz(3)
+
+  module    CourseModule? @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lesson    Lesson?       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions Question[]
+  attempts  QuizAttempt[]
+
+  @@index([moduleId, status])
+  @@index([status])
+}
+
+model Question {
+  id        String       @id @default(uuid()) @db.Uuid
+  quizId    String       @db.Uuid
+  type      QuestionType
+  prompt    String       @db.Text
+  points    Decimal      @db.Decimal(8, 2)
+  sortOrder Int
+  createdAt DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime     @updatedAt @db.Timestamptz(3)
+
+  quiz             Quiz              @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options          QuestionOption[]
+  attemptQuestions AttemptQuestion[]
+
+  @@unique([quizId, sortOrder])
+  @@index([quizId, type])
+}
+
+model QuestionOption {
+  id         String   @id @default(uuid()) @db.Uuid
+  questionId String   @db.Uuid
+  text       String   @db.Text
+  isCorrect  Boolean  @default(false)
+  sortOrder  Int
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, sortOrder])
+  @@index([questionId, isCorrect])
+}
+
+model QuizAttempt {
+  id            String            @id @default(uuid()) @db.Uuid
+  quizId        String            @db.Uuid
+  enrollmentId  String            @db.Uuid
+  userId        String            @db.Uuid
+  attemptNumber Int
+  status        QuizAttemptStatus @default(IN_PROGRESS)
+  score         Decimal?          @db.Decimal(8, 2)
+  maxScore      Decimal           @db.Decimal(8, 2)
+  startedAt     DateTime          @default(now()) @db.Timestamptz(3)
+  expiresAt     DateTime?         @db.Timestamptz(3)
+  submittedAt   DateTime?         @db.Timestamptz(3)
+  gradedAt      DateTime?         @db.Timestamptz(3)
+  createdAt     DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime          @updatedAt @db.Timestamptz(3)
+
+  quiz             Quiz              @relation(fields: [quizId], references: [id], onDelete: Restrict)
+  enrollment       Enrollment        @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)
+  user             User              @relation(fields: [userId], references: [id], onDelete: Restrict)
+  attemptQuestions AttemptQuestion[]
+
+  @@unique([userId, quizId, attemptNumber])
+  @@index([quizId, status])
+  @@index([enrollmentId])
+  @@index([userId, createdAt])
+  @@index([status, submittedAt])
+}
+
+model AttemptQuestion {
+  id                 String       @id @default(uuid()) @db.Uuid
+  attemptId          String       @db.Uuid
+  originalQuestionId String?      @db.Uuid
+  type               QuestionType
+  promptSnapshot     String       @db.Text
+  pointsSnapshot     Decimal      @db.Decimal(8, 2)
+  sortOrder          Int
+
+  attempt          QuizAttempt             @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  originalQuestion Question?               @relation(fields: [originalQuestionId], references: [id], onDelete: SetNull)
+  options          AttemptQuestionOption[]
+  answer           AttemptAnswer?
+
+  @@unique([attemptId, sortOrder])
+  @@index([originalQuestionId])
+}
+
+model AttemptQuestionOption {
+  id                String  @id @default(uuid()) @db.Uuid
+  attemptQuestionId String  @db.Uuid
+  originalOptionId  String? @db.Uuid
+  textSnapshot      String  @db.Text
+  isCorrectSnapshot Boolean
+  sortOrder         Int
+
+  attemptQuestion AttemptQuestion @relation(fields: [attemptQuestionId], references: [id], onDelete: Cascade)
+  selectedBy      AttemptAnswer[] @relation("SelectedOption")
+
+  @@unique([attemptQuestionId, sortOrder])
+}
+
+model AttemptAnswer {
+  id                  String    @id @default(uuid()) @db.Uuid
+  attemptQuestionId   String    @unique @db.Uuid
+  selectedOptionId    String?   @db.Uuid
+  essayText           String?   @db.Text
+  autoAwardedPoints   Decimal?  @db.Decimal(8, 2)
+  manualAwardedPoints Decimal?  @db.Decimal(8, 2)
+  instructorFeedback  String?   @db.Text
+  gradedById          String?   @db.Uuid
+  gradedAt            DateTime? @db.Timestamptz(3)
+  createdAt           DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt           DateTime  @updatedAt @db.Timestamptz(3)
+
+  attemptQuestion AttemptQuestion        @relation(fields: [attemptQuestionId], references: [id], onDelete: Cascade)
+  selectedOption  AttemptQuestionOption? @relation("SelectedOption", fields: [selectedOptionId], references: [id], onDelete: SetNull)
+  gradedBy        User?                  @relation("AnswerGrader", fields: [gradedById], references: [id], onDelete: SetNull)
+
+  @@index([gradedById])
+}
+
+model Certificate {
+  id                String            @id @default(uuid()) @db.Uuid
+  enrollmentId      String            @unique @db.Uuid
+  userId            String            @db.Uuid
+  courseId          String            @db.Uuid
+  certificateNumber String            @unique @db.VarChar(80)
+  status            CertificateStatus @default(PENDING)
+  fileKey           String?           @unique @db.VarChar(500)
+  issuedAt          DateTime?         @db.Timestamptz(3)
+  failureReason     String?           @db.Text
+  createdAt         DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime          @updatedAt @db.Timestamptz(3)
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course     Course     @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  @@index([userId, issuedAt])
+  @@index([courseId, issuedAt])
+  @@index([status])
+}
+
+model Testimonial {
+  id            String            @id @default(uuid()) @db.Uuid
+  userId        String            @db.Uuid
+  courseId      String            @db.Uuid
+  rating        Int
+  comment       String            @db.Text
+  status        TestimonialStatus @default(PENDING)
+  moderatedById String?           @db.Uuid
+  moderatedAt   DateTime?         @db.Timestamptz(3)
+  createdAt     DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime          @updatedAt @db.Timestamptz(3)
+
+  user        User   @relation("TestimonialAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  course      Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  moderatedBy User?  @relation("TestimonialModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
+
+  @@unique([userId, courseId])
+  @@index([status, createdAt])
+  @@index([courseId, status])
+}
+
+model FAQ {
+  id        String   @id @default(uuid()) @db.Uuid
+  question  String   @db.Text
+  answer    String   @db.Text
+  sortOrder Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@unique([sortOrder])
+  @@index([isActive, sortOrder])
+}
+
+model PlatformSetting {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique @db.VarChar(160)
+  value       Json
+  description String?  @db.VarChar(500)
+  updatedById String?  @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+
+  updatedBy User? @relation("SettingUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@index([updatedById])
+}
+
+model Notification {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @db.Uuid
+  type      NotificationType @default(GENERIC)
+  title     String           @db.VarChar(220)
+  body      String           @db.Text
+  data      Json?
+  readAt    DateTime?        @db.Timestamptz(3)
+  createdAt DateTime         @default(now()) @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+  @@index([type, createdAt])
+}
+
+model NotificationPreference {
+  id                 String   @id @default(uuid()) @db.Uuid
+  userId             String   @unique @db.Uuid
+  emailPayments      Boolean  @default(true)
+  emailCourseUpdates Boolean  @default(true)
+  emailQuizResults   Boolean  @default(true)
+  inAppPayments      Boolean  @default(true)
+  inAppCourseUpdates Boolean  @default(true)
+  inAppQuizResults   Boolean  @default(true)
+  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @db.Uuid
+  action     String   @db.VarChar(160)
+  entityType String   @db.VarChar(120)
+  entityId   String?  @db.VarChar(120)
+  metadata   Json?
+  ipAddress  String?  @db.VarChar(64)
+  userAgent  String?  @db.VarChar(500)
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  actor User? @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId, createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@index([action, createdAt])
+}

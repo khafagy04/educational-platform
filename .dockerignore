@@ -1,0 +1,15 @@
+node_modules
+**/node_modules
+.git
+.next
+**/.next
+**/.next-*
+backend/src/generated
+dist
+**/dist
+coverage
+graphify-out
+*.log
+.env
+.env.*
+!.env.example

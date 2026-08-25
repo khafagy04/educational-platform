@@ -1,0 +1,20 @@
+.list {
+  display: grid;
+}
+
+.chevron,
+.chevronOpen {
+  flex: 0 0 auto;
+  transition: transform 180ms ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron,
+  .chevronOpen {
+    transition: none;
+  }
+}

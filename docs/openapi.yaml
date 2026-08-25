@@ -1,0 +1,212 @@
+openapi: 3.1.0
+info: { title: Midad Educational Platform API, version: 1.0.0 }
+servers: [{ url: /api/v1 }]
+security: [{ bearerAuth: [] }]
+paths:
+  /health/live: { get: { security: [], responses: { '200': { description: Live } } } }
+  /health/ready: { get: { security: [], responses: { '200': { description: Ready } } } }
+  /auth/register:
+    post:
+      {
+        security: [],
+        requestBody:
+          {
+            required: true,
+            content: { application/json: { schema: { $ref: '#/components/schemas/Register' } } },
+          },
+        responses:
+          { '201': { description: Registered }, '400': { $ref: '#/components/responses/Error' } },
+      }
+  /auth/login:
+    post:
+      {
+        security: [],
+        requestBody:
+          {
+            required: true,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        required: [email, password],
+                        properties:
+                          { email: { type: string, format: email }, password: { type: string } },
+                      },
+                  },
+              },
+          },
+        responses:
+          {
+            '200': { description: Access token and user },
+            '401': { $ref: '#/components/responses/Error' },
+          },
+      }
+  /auth/me:
+    {
+      get:
+        {
+          responses:
+            {
+              '200': { description: Current user },
+              '401': { $ref: '#/components/responses/Error' },
+            },
+        },
+    }
+  /courses:
+    get:
+      {
+        security: [],
+        parameters:
+          [
+            { name: search, in: query, schema: { type: string } },
+            { name: gradeId, in: query, schema: { type: string, format: uuid } },
+            { name: subjectId, in: query, schema: { type: string, format: uuid } },
+            { name: pricing, in: query, schema: { enum: [all, free, paid] } },
+            {
+              name: sort,
+              in: query,
+              schema: { enum: [newest, price-asc, price-desc, popularity] },
+            },
+            { name: page, in: query, schema: { type: integer, minimum: 1 } },
+          ],
+        responses: { '200': { description: Published courses } },
+      }
+    post:
+      {
+        requestBody:
+          {
+            required: true,
+            content: { application/json: { schema: { $ref: '#/components/schemas/Course' } } },
+          },
+        responses:
+          {
+            '201': { description: Course created },
+            '403': { $ref: '#/components/responses/Error' },
+          },
+      }
+  /dashboard/student/home: { get: { responses: { '200': { description: Student aggregates } } } }
+  /me/courses: { get: { responses: { '200': { description: Enrolled courses } } } }
+  /me/courses/{id}/player:
+    {
+      get:
+        {
+          parameters: [{ $ref: '#/components/parameters/Id' }],
+          responses:
+            {
+              '200': { description: Protected course outline },
+              '403': { $ref: '#/components/responses/Error' },
+            },
+        },
+    }
+  /lessons/{id}/video-token:
+    {
+      get:
+        {
+          parameters: [{ $ref: '#/components/parameters/Id' }],
+          responses:
+            {
+              '200': { description: Short-lived playback grant },
+              '403': { $ref: '#/components/responses/Error' },
+            },
+        },
+    }
+  /wallet: { get: { responses: { '200': { description: Wallet balance } } } }
+  /wallet/transactions: { get: { responses: { '200': { description: Private ledger } } } }
+  /quizzes/{id}/attempts:
+    {
+      post:
+        {
+          parameters: [{ $ref: '#/components/parameters/Id' }],
+          responses: { '201': { description: Safe attempt snapshot } },
+        },
+    }
+  /attempts/{id}/submit:
+    {
+      post:
+        {
+          parameters: [{ $ref: '#/components/parameters/Id' }],
+          responses: { '200': { description: Graded or pending attempt } },
+        },
+    }
+  /me/certificates: { get: { responses: { '200': { description: Owned certificates } } } }
+  /admin/analytics/{report}/export:
+    {
+      get:
+        {
+          parameters:
+            [
+              {
+                name: report,
+                in: path,
+                required: true,
+                schema: { enum: [revenue, payments, engagement] },
+              },
+              { name: format, in: query, required: true, schema: { enum: [csv, xlsx] } },
+            ],
+          responses: { '200': { description: Report file } },
+        },
+    }
+components:
+  securitySchemes: { bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT } }
+  parameters: { Id: { name: id, in: path, required: true, schema: { type: string, format: uuid } } }
+  responses:
+    {
+      Error:
+        {
+          description: Application error,
+          content:
+            {
+              application/json:
+                {
+                  schema:
+                    {
+                      type: object,
+                      properties:
+                        {
+                          error:
+                            {
+                              type: object,
+                              properties: { code: { type: string }, message: { type: string } },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    }
+  schemas:
+    Register:
+      {
+        type: object,
+        required: [name, email, phone, parentPhone, gradeId, governorate, school, password],
+        properties:
+          {
+            name: { type: string },
+            email: { type: string, format: email },
+            phone: { type: string },
+            parentPhone: { type: string },
+            gradeId: { type: string, format: uuid },
+            governorate: { type: string },
+            school: { type: string },
+            password: { type: string, minLength: 10 },
+          },
+      }
+    Course:
+      {
+        type: object,
+        required: [gradeId, subjectId, title, description, price, accessDurationDays, status],
+        properties:
+          {
+            gradeId: { type: string, format: uuid },
+            subjectId: { type: string, format: uuid },
+            title: { type: string },
+            slug: { type: string },
+            description: { type: string },
+            price: { type: number, minimum: 0 },
+            accessDurationDays: { type: integer },
+            status: { enum: [DRAFT, PUBLISHED, ARCHIVED] },
+          },
+      }
