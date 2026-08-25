@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="مِداد — منصة تعليمية عربية تجعل الفهم خطوة واضحة من الدرس إلى الإتقان."
+    />
+    <meta name="theme-color" content="#3659e3" />
+    <title>مِداد | افهم، جرّب، أتقن</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./pages.css" />
+    <script src="./pages.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">انتقل إلى المحتوى</a>
+
+    <aside class="pages-notice" id="pages-note" aria-label="تنبيه نسخة العرض">
+      <div>
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path
+            d="M12 9v4m0 4h.01M10.3 3.8 2.2 18a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"
+          />
+        </svg>
+        <p>
+          <strong>نسخة عرض GitHub Pages</strong> — الواجهة العامة تعمل هنا، أما الحسابات ولوحات
+          التحكم فتحتاج خادم المنصة.
+        </p>
+      </div>
+      <a href="https://github.com/A7mad3lwan/educational-platform" target="_blank" rel="noreferrer"
+        >عرض المشروع</a
+      >
+    </aside>
+
+    <header class="site-header" data-header>
+      <a class="brand" href="#top" aria-label="مِداد — الصفحة الرئيسية">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40">
+            <path d="M9 27.5c5.2-1 7.4-4 8.3-9.4.7 4.4 3 7.4 6.6 9.2 1.2-6.3 3.5-10.8 7.1-13.4" />
+            <path d="M8 31h24" />
+          </svg>
+        </span>
+        <span>مِداد</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="التنقل الرئيسي">
+        <a href="#courses">المساقات</a>
+        <a href="#method">طريقة المذاكرة</a>
+        <a href="#teacher">عن المدرّس</a>
+        <a href="#faq">الأسئلة</a>
+      </nav>
+
+      <button class="login-button" type="button" data-preview-action>
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5m5 5H3" />
+        </svg>
+        دخول الطلاب
+      </button>
+
+      <button
+        class="menu-button"
+        type="button"
+        aria-label="فتح القائمة"
+        aria-expanded="false"
+        data-menu-button
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="mobile-nav" aria-label="التنقل على الهاتف" data-mobile-nav>
+        <a href="#courses">المساقات</a>
+        <a href="#method">طريقة المذاكرة</a>
+        <a href="#teacher">عن المدرّس</a>
+        <a href="#faq">الأسئلة</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-copy reveal">
+          <p class="kicker"><span></span>منصة عربية للتعلّم الواضح</p>
+          <h1>مش محتاج تذاكر أكتر.<br />محتاج <em>تفهم أذكى.</em></h1>
+          <p class="hero-lead">
+            دروس مركّزة، تدريب في مكانه، وخط تقدّم يريك أين أنت وما الخطوة التالية — بلا قوائم مربكة
+            أو حشو.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#courses">
+              ابدأ من مستواك
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+            </a>
+            <button class="secondary-button" type="button" data-demo-button>
+              <span class="play-icon"
+                ><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 8-6-8-6v12Z" /></svg
+              ></span>
+              شاهد الفكرة في 45 ثانية
+            </button>
+          </div>
+          <div class="hero-proof" aria-label="مزايا المنصة">
+            <span
+              ><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg>اختبار
+              مجاني</span
+            >
+            <span
+              ><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg>تقدّم
+              محفوظ</span
+            >
+            <span
+              ><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg>يعمل على
+              كل الأجهزة</span
+            >
+          </div>
+        </div>
+
+        <div class="trail-card reveal" aria-label="خريطة رحلة التعلم">
+          <div class="trail-heading">
+            <small>رحلتك في درس اليوم</small>
+            <strong>المعادلات ذات الخطوة الواحدة</strong>
+          </div>
+          <svg
+            class="trail-path"
+            viewBox="0 0 440 265"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path class="trail-base" d="M55 65 C110 18 145 150 210 128 S325 52 390 82" />
+            <path class="trail-active" d="M55 65 C110 18 145 150 210 128" />
+          </svg>
+          <div class="trail-node node-one is-complete">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path
+                d="M9 18h6m-5 3h4m3-11a5 5 0 1 0-10 0c0 2 1 3 2.2 4.2.5.5.8 1.1.8 1.8h4c0-.7.3-1.3.8-1.8C16 13 17 12 17 10Z"
+              />
+            </svg>
+            <em>افهم</em>
+          </div>
+          <div class="trail-node node-two is-current">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+            </svg>
+            <em>جرّب</em>
+          </div>
+          <div class="trail-node node-three">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="m9 12 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            <em>أتقن</em>
+          </div>
+          <div class="lesson-progress">
+            <span>تقدّم الدرس</span><strong>68%</strong>
+            <div><i></i></div>
+          </div>
+          <span class="spark spark-one"></span><span class="spark spark-two"></span
+          ><span class="spark spark-three"></span>
+        </div>
+      </section>
+
+      <section class="proof-band" aria-label="أرقام المنصة">
+        <div><strong data-count="12">0</strong><span>سنة خبرة</span></div>
+        <div><strong data-count="9">0</strong><span>صفوف دراسية</span></div>
+        <div><strong data-count="96" data-suffix="%">0</strong><span>رضا الطلاب</span></div>
+        <div><strong>24/7</strong><span>تقدّم محفوظ</span></div>
+      </section>
+
+      <section class="section courses-section" id="courses">
+        <div class="section-heading reveal">
+          <div>
+            <p class="kicker"><span></span>ابدأ من مكانك الحقيقي</p>
+            <h2>اختَر مكانك في المنهج</h2>
+          </div>
+          <p>بدل كتالوج طويل، سترى صفك أولاً ثم المساقات الأنسب للحظة الحالية.</p>
+        </div>
+
+        <div class="grade-tabs reveal" role="tablist" aria-label="اختيار المرحلة">
+          <button class="active" type="button" role="tab" aria-selected="true" data-grade="middle">
+            المرحلة الإعدادية
+          </button>
+          <button type="button" role="tab" aria-selected="false" data-grade="primary">
+            المرحلة الابتدائية
+          </button>
+          <button type="button" role="tab" aria-selected="false" data-grade="secondary">
+            المرحلة الثانوية
+          </button>
+        </div>
+
+        <div class="course-grid" data-course-grid>
+          <article class="course-card reveal">
+            <div class="course-top">
+              <span class="subject-icon blue"
+                ><svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path
+                    d="M4 19.5V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-1.5Zm0 0A2.5 2.5 0 0 1 6.5 17H18M8 7h6"
+                  /></svg></span
+              ><span class="course-badge">الأكثر طلباً</span>
+            </div>
+            <p class="course-meta">الرياضيات · الصف الثاني الإعدادي</p>
+            <h3>أساسيات الجبر</h3>
+            <p>من لغة الرموز إلى حل المعادلة، بخطوات قصيرة وتمارين توضّح الفكرة.</p>
+            <div class="course-bottom">
+              <span>18 درساً</span
+              ><button type="button" data-preview-action aria-label="عرض مساق أساسيات الجبر">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+              </button>
+            </div>
+          </article>
+          <article class="course-card reveal">
+            <div class="course-top">
+              <span class="subject-icon coral"
+                ><svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path
+                    d="M9 3v6l-4 8a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-4-8V3M8 3h8M7 15h10"
+                  /></svg></span
+              ><span class="course-badge soft">مسار تأسيسي</span>
+            </div>
+            <p class="course-meta">العلوم · الصف الأول الإعدادي</p>
+            <h3>المادة وتغيّراتها</h3>
+            <p>شاهد ما يحدث، توقّع النتيجة، ثم ثبّت الفهم بتجربة وسؤال.</p>
+            <div class="course-bottom">
+              <span>14 درساً</span
+              ><button type="button" data-preview-action aria-label="عرض مساق المادة وتغيراتها">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+              </button>
+            </div>
+          </article>
+          <article class="course-card reveal">
+            <div class="course-top">
+              <span class="subject-icon mango"
+                ><svg aria-hidden="true" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" /></svg></span
+              ><span class="course-badge soft">جديد</span>
+            </div>
+            <p class="course-meta">الرياضيات · الصف الثالث الإعدادي</p>
+            <h3>مراجعة ذكية قبل الامتحان</h3>
+            <p>خريطة مركّزة لأكثر الأفكار تكراراً مع قياس فوري لنقاط الضعف.</p>
+            <div class="course-bottom">
+              <span>10 دروس</span
+              ><button type="button" data-preview-action aria-label="عرض مساق المراجعة الذكية">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="method-section" id="method">
+        <div class="method-copy reveal">
+          <p class="kicker light"><span></span>خطّ الفهم</p>
+          <h2>كل درس له<br /><em>خط نهاية واضح.</em></h2>
+          <p>نفس الخطوات تظهر في الصفحة، الدرس، والاختبار؛ فتتعرف على مكانك من غير شرح إضافي.</p>
+          <div class="method-total">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" /></svg
+            ><span><strong>24 دقيقة</strong> متوسط رحلة الفهم الواحدة</span>
+          </div>
+        </div>
+        <div class="method-steps">
+          <article class="method-step reveal">
+            <span class="step-number">01</span
+            ><span class="step-icon blue"
+              ><svg aria-hidden="true" viewBox="0 0 24 24">
+                <path
+                  d="M9 18h6m-5 3h4m3-11a5 5 0 1 0-10 0c0 2 1 3 2.2 4.2.5.5.8 1.1.8 1.8h4c0-.7.3-1.3.8-1.8C16 13 17 12 17 10Z"
+                /></svg
+            ></span>
+            <div>
+              <h3>افهم</h3>
+              <p>فيديو مركّز، خريطة فكرة، ومثال واحد مشروح.</p>
+            </div>
+            <small>7 د</small>
+          </article>
+          <article class="method-step reveal">
+            <span class="step-number">02</span
+            ><span class="step-icon mango"
+              ><svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" /></svg
+            ></span>
+            <div>
+              <h3>جرّب</h3>
+              <p>سؤال في مكانه مع تلميح عندما تحتاجه.</p>
+            </div>
+            <small>12 د</small>
+          </article>
+          <article class="method-step reveal">
+            <span class="step-number">03</span
+            ><span class="step-icon green"
+              ><svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="m9 12 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg
+            ></span>
+            <div>
+              <h3>أتقن</h3>
+              <p>اختبار قصير يوضح ما أتقنته وما يحتاج مراجعة.</p>
+            </div>
+            <small>5 د</small>
+          </article>
+        </div>
+      </section>
+
+      <section class="teacher-section section" id="teacher">
+        <div class="teacher-visual reveal" aria-hidden="true">
+          <span>م</span><i class="formula formula-one">س + ٣ = ٧</i
+          ><i class="formula formula-two">πr²</i>
+        </div>
+        <div class="teacher-copy reveal">
+          <p class="kicker"><span></span>عن المدرّس</p>
+          <h2>لا تحفظ خطوة<br />لم تفهم سببها.</h2>
+          <p>
+            نبني الدرس كما تُبنى المسألة على السبورة: سؤال واضح، فكرة واحدة في كل مرة، ثم تدريب يكشف
+            الفهم الحقيقي.
+          </p>
+          <div class="teacher-quote">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path
+                d="M3 21c3 0 7-1 7-8V5H3v8h4c0 4-2 5-4 5v3Zm11 0c3 0 7-1 7-8V5h-7v8h4c0 4-2 5-4 5v3Z"
+              />
+            </svg>
+            <p>هدفي إن الطالب يعرف يقول: أنا فاهم ليه — مش بس حافظ إزاي.</p>
+          </div>
+          <strong>الأستاذ أحمد محمود</strong><small>مدرّس الرياضيات والعلوم · 12 سنة خبرة</small>
+        </div>
+      </section>
+
+      <section class="cta-section section reveal">
+        <div>
+          <span class="cta-mark" aria-hidden="true">؟</span>
+          <p class="kicker"><span></span>نقطة البداية</p>
+          <h2>مش عارف تبدأ منين؟</h2>
+          <p>اختبار تحديد مستوى مختصر يرشّح لك المسار الأنسب.</p>
+        </div>
+        <button class="primary-button" type="button" data-preview-action>
+          ابدأ الاختبار المجاني<svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+        </button>
+      </section>
+
+      <section class="faq-section section" id="faq">
+        <div class="faq-heading reveal">
+          <p class="kicker"><span></span>قبل أن تبدأ</p>
+          <h2>أسئلة مباشرة،<br />وإجابات أوضح.</h2>
+          <p>أهم ما تحتاج معرفته قبل اختيار المساق المناسب.</p>
+        </div>
+        <div class="faq-list reveal">
+          <article class="faq-item">
+            <button type="button" aria-expanded="true">
+              <span>هل أستطيع تجربة المنصة قبل الاشتراك؟</span><i>−</i>
+            </button>
+            <div>
+              <p>نعم. ابدأ بالمساقات المجانية واختبار تحديد المستوى، ثم اختر المسار المناسب لك.</p>
+            </div>
+          </article>
+          <article class="faq-item">
+            <button type="button" aria-expanded="false">
+              <span>هل تعمل الدروس على الموبايل؟</span><i>+</i>
+            </button>
+            <div hidden>
+              <p>نعم. الواجهة ومشغّل الدرس مصممان للعمل بسلاسة من الموبايل والكمبيوتر.</p>
+            </div>
+          </article>
+          <article class="faq-item">
+            <button type="button" aria-expanded="false">
+              <span>كيف أعرف أنني أتقدّم فعلاً؟</span><i>+</i>
+            </button>
+            <div hidden>
+              <p>تُحفظ نسبة تقدّمك، وتظهر نتائج الاختبارات ونقاط المراجعة في لوحة الطالب.</p>
+            </div>
+          </article>
+          <article class="faq-item">
+            <button type="button" aria-expanded="false">
+              <span>هل يمكنني الرجوع إلى الدرس لاحقاً؟</span><i>+</i>
+            </button>
+            <div hidden><p>نعم، يبقى المساق ودروسه متاحين وفق مدة الاشتراك الخاصة به.</p></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-brand">
+        <a class="brand" href="#top"
+          ><span class="brand-mark" aria-hidden="true"
+            ><svg viewBox="0 0 40 40">
+              <path d="M9 27.5c5.2-1 7.4-4 8.3-9.4.7 4.4 3 7.4 6.6 9.2 1.2-6.3 3.5-10.8 7.1-13.4" />
+              <path d="M8 31h24" /></svg></span
+          ><span>مِداد</span></a
+        >
+        <p>منصة تعليمية عربية تجعل الخطوة التالية واضحة.</p>
+      </div>
+      <nav aria-label="روابط التذييل">
+        <a href="#courses">المساقات</a><a href="#method">طريقة المذاكرة</a
+        ><a href="#faq">الأسئلة الشائعة</a
+        ><button type="button" data-preview-action>دخول الطلاب</button>
+      </nav>
+      <div class="footer-meta">
+        <span>نسخة عرض ثابتة</span
+        ><a
+          href="https://github.com/A7mad3lwan/educational-platform"
+          target="_blank"
+          rel="noreferrer"
+          >GitHub ↗</a
+        >
+      </div>
+    </footer>
+
+    <dialog class="preview-dialog" data-preview-dialog>
+      <button class="dialog-close" type="button" aria-label="إغلاق" data-dialog-close>×</button>
+      <span class="dialog-icon"
+        ><svg aria-hidden="true" viewBox="0 0 24 24">
+          <path
+            d="M12 9v4m0 4h.01M10.3 3.8 2.2 18a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"
+          /></svg
+      ></span>
+      <h2>هذه نسخة الواجهة العامة</h2>
+      <p>
+        تسجيل الدخول، الاختبارات، ولوحات الطالب والمدرّس تحتاج API وقاعدة بيانات، وهي لا تعمل على
+        استضافة GitHub Pages الثابتة.
+      </p>
+      <div>
+        <a
+          href="https://github.com/A7mad3lwan/educational-platform#local-development"
+          target="_blank"
+          rel="noreferrer"
+          >تشغيل المنصة الكاملة</a
+        ><button type="button" data-dialog-close>أكمل التصفّح</button>
+      </div>
+    </dialog>
+
+    <dialog class="demo-dialog" data-demo-dialog>
+      <button class="dialog-close" type="button" aria-label="إغلاق" data-dialog-close>×</button>
+      <div class="demo-stage">
+        <div class="demo-orbit">
+          <span></span
+          ><svg aria-hidden="true" viewBox="0 0 24 24">
+            <path
+              d="M9 18h6m-5 3h4m3-11a5 5 0 1 0-10 0c0 2 1 3 2.2 4.2.5.5.8 1.1.8 1.8h4c0-.7.3-1.3.8-1.8C16 13 17 12 17 10Z"
+            />
+          </svg>
+        </div>
+        <p>فكرة واحدة</p>
+        <i></i>
+        <p>سؤال في مكانه</p>
+        <i></i>
+        <p>دليل واضح على الإتقان</p>
+      </div>
+      <h2>كل شاشة تجيب عن سؤال واحد</h2>
+      <p>هذه هي فكرة مِداد: تقلّ الحيرة، فتزيد المساحة المتاحة للفهم.</p>
+    </dialog>
+  </body>
+</html>

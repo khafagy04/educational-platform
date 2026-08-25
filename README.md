@@ -2,6 +2,11 @@
 
 Arabic-first educational platform for a single instructor, organized as an npm workspace monorepo.
 
+Public UI showcase: [https://a7mad3lwan.github.io/educational-platform/](https://a7mad3lwan.github.io/educational-platform/)
+
+> GitHub Pages hosts the static public-facing showcase only. Authentication, dashboards, payments,
+> video security, and other server-backed features require the full local or production stack.
+
 ## Prerequisites
 
 - Node.js 24+
