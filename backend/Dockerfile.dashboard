@@ -1,0 +1,28 @@
+FROM node:24-alpine AS dashboard
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY backend/package.json backend/package.json
+COPY frontend/package.json frontend/package.json
+RUN npm ci --workspace @educational-platform/backend --include-workspace-root
+
+COPY backend backend
+
+ARG DATABASE_URL=postgresql://platform:platform_dev_only@localhost:5432/educational_platform
+ENV DATABASE_URL=$DATABASE_URL
+
+RUN npm run db:generate --workspace @educational-platform/backend
+RUN npm run build --workspace @educational-platform/backend
+RUN mkdir -p /tmp/midad-storage && chown -R node:node /tmp/midad-storage
+
+ENV NODE_ENV=production
+ENV LOCAL_STORAGE_PATH=/tmp/midad-storage
+
+USER node
+EXPOSE 4000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD wget -qO- "http://127.0.0.1:${PORT:-4000}/api/v1/health/live" || exit 1
+
+CMD ["sh", "backend/scripts/start-dashboard.sh"]

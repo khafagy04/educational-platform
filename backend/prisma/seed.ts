@@ -34,7 +34,19 @@ const now = new Date();
 const oneYearFromNow = new Date(now);
 oneYearFromNow.setUTCDate(oneYearFromNow.getUTCDate() + 365);
 
+function seedEmail(variableName: string, fallback: string) {
+  const configuredEmail = process.env[variableName]?.trim().toLowerCase();
+
+  if (configuredEmail === undefined || configuredEmail.length === 0) {
+    return fallback;
+  }
+
+  return configuredEmail;
+}
+
 async function seedUsers() {
+  const instructorEmail = seedEmail('SEED_INSTRUCTOR_EMAIL', 'instructor@example.local');
+  const adminEmail = seedEmail('SEED_ADMIN_EMAIL', 'admin@example.local');
   const [instructorPasswordHash, adminPasswordHash, studentPasswordHash] = await Promise.all([
     bcrypt.hash(process.env.SEED_INSTRUCTOR_PASSWORD ?? 'Instructor!2026', 12),
     bcrypt.hash(process.env.SEED_ADMIN_PASSWORD ?? 'Admin!2026', 12),
@@ -42,7 +54,7 @@ async function seedUsers() {
   ]);
 
   const instructor = await prisma.user.upsert({
-    where: { email: 'instructor@example.local' },
+    where: { email: instructorEmail },
     update: {
       name: 'الأستاذ أحمد محمود',
       passwordHash: instructorPasswordHash,
@@ -51,7 +63,7 @@ async function seedUsers() {
     },
     create: {
       name: 'الأستاذ أحمد محمود',
-      email: 'instructor@example.local',
+      email: instructorEmail,
       phone: '+201000000001',
       passwordHash: instructorPasswordHash,
       role: UserRole.INSTRUCTOR,
@@ -62,7 +74,7 @@ async function seedUsers() {
   });
 
   await prisma.user.upsert({
-    where: { email: 'admin@example.local' },
+    where: { email: adminEmail },
     update: {
       name: 'مدير المنصة',
       passwordHash: adminPasswordHash,
@@ -71,7 +83,7 @@ async function seedUsers() {
     },
     create: {
       name: 'مدير المنصة',
-      email: 'admin@example.local',
+      email: adminEmail,
       phone: '+201000000004',
       passwordHash: adminPasswordHash,
       role: UserRole.ADMIN,
@@ -416,8 +428,9 @@ async function seedStudentExperience(
   courseId: string,
   introductionLessonId: string,
 ) {
+  const studentEmail = seedEmail('SEED_STUDENT_EMAIL', 'student@example.local');
   const student = await prisma.user.upsert({
-    where: { email: 'student@example.local' },
+    where: { email: studentEmail },
     update: {
       name: 'مريم محمد علي',
       gradeId,
@@ -427,7 +440,7 @@ async function seedStudentExperience(
     },
     create: {
       name: 'مريم محمد علي',
-      email: 'student@example.local',
+      email: studentEmail,
       phone: '+201000000002',
       parentPhone: '+201000000003',
       governorate: 'القاهرة',

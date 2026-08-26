@@ -36,3 +36,6 @@ npm run build
 ```
 
 Project decisions and implementation gates live in [`docs/phase-0`](docs/phase-0/README.md). Phases 0–22 are implemented; see [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) for verified release checks and the external provider checks deferred until credentials are supplied.
+
+For a no-cost student and teacher dashboard review environment, follow
+[`docs/DASHBOARD_FREE_DEPLOYMENT.md`](docs/DASHBOARD_FREE_DEPLOYMENT.md).
