@@ -305,7 +305,7 @@ export default function DashboardHome() {
             <div>
               <dt>
                 <BookOpenCheck size={17} aria-hidden="true" />
-                المساقات
+                الدروس
               </dt>
               <dd>{home.stats.enrolledCoursesCount.toLocaleString('ar-EG')}</dd>
             </div>
@@ -416,7 +416,7 @@ export default function DashboardHome() {
               <h2>قد يناسبك بعد ذلك</h2>
             </div>
             <Link href="/courses">
-              كل المساقات
+              كل الدروس
               <ArrowLeft size={16} aria-hidden="true" />
             </Link>
           </div>

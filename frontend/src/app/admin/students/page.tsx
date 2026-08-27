@@ -10,6 +10,10 @@ type S = {
   grade: { name: string } | null;
   _count: { enrollments: number };
 };
+const userStatusLabels: Record<string, string> = {
+  ACTIVE: 'نشط',
+  SUSPENDED: 'موقوف',
+};
 export default function Students() {
   const [items, setItems] = useState<S[]>([]),
     [search, setSearch] = useState('');
@@ -41,7 +45,7 @@ export default function Students() {
                 {x.email} · {x.grade?.name}
               </small>
             </div>
-            <span>{x.status}</span>
+            <span>{userStatusLabels[x.status] ?? x.status}</span>
             <b>{x._count.enrollments} مساقات</b>
           </article>
         ))}

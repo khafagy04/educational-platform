@@ -226,7 +226,7 @@ export class StudentService {
       where: { userId, courseId, status: { in: activeStatuses }, expiresAt: { gt: new Date() } },
       select: { id: true },
     });
-    if (!enrollment) throw new ForbiddenError('يمكن إضافة المساقات المشتركة فقط إلى المفضلة');
+    if (!enrollment) throw new ForbiddenError('يمكن إضافة الدروس المشتركة فقط إلى المفضلة');
     if (enabled)
       await this.database.courseFavorite.upsert({
         where: { userId_courseId: { userId, courseId } },

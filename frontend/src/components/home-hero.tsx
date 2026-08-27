@@ -100,7 +100,7 @@ export function HomeHero() {
           </span>
           <span className={`${styles.trailNode} ${styles.nodeMaster}`}>
             <BadgeCheck aria-hidden="true" />
-            <em>اتقن السؤال</em>
+            <em>أتقن السؤال</em>
           </span>
           <div className={styles.progressBubble}>
             <small>تقدّم المثال</small>

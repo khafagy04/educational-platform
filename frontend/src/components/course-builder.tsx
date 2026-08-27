@@ -16,6 +16,17 @@ type Course = {
   status: string;
 };
 type Lesson = { id: string; title: string; type: string; sortOrder: number };
+const lessonTypeLabels: Record<string, string> = {
+  VIDEO: 'فيديو',
+  PDF: 'ملف',
+  QUIZ: 'اختبار',
+  TEXT: 'نصي',
+};
+const quizStatusLabels: Record<string, string> = {
+  DRAFT: 'مسودة',
+  PUBLISHED: 'منشور',
+  ARCHIVED: 'مؤرشف',
+};
 type Module = {
   id: string;
   title: string;
@@ -301,7 +312,7 @@ export function CourseBuilder({ courseId }: { courseId?: string }) {
                       <li key={l.id}>
                         <div>
                           <strong>{l.title}</strong>
-                          <small>{l.type}</small>
+                          <small>{lessonTypeLabels[l.type] ?? l.type}</small>
                         </div>
                         <div className="lesson-upload-tools">
                           <form onSubmit={(event) => void uploadAttachment(event, l.id)}>
@@ -361,7 +372,8 @@ export function CourseBuilder({ courseId }: { courseId?: string }) {
                 <article key={quiz.id}>
                   <h3>{quiz.title}</h3>
                   <small>
-                    {quiz.status} · {quiz._count.questions} أسئلة · {quiz._count.attempts} محاولات
+                    {quizStatusLabels[quiz.status] ?? quiz.status} · {quiz._count.questions} أسئلة ·{' '}
+                    {quiz._count.attempts} محاولات
                   </small>
                   <form
                     className="inline-form quiz-question-form"

@@ -36,10 +36,10 @@ export function HomeCourseShowcase({ courses }: { courses: Course[] }) {
     return (
       <div className={styles.courseEmpty}>
         <BookOpen aria-hidden="true" />
-        <h3>المساقات تُرتّب الآن</h3>
-        <p>افتح صفحة المساقات لترى كل ما أصبح متاحاً.</p>
+        <h3>الدروس تُرتّب الآن</h3>
+        <p>افتح صفحة الدروس لترى كل ما أصبح متاحاً.</p>
         <Link href="/courses">
-          عرض المساقات <ArrowLeft aria-hidden="true" size={16} />
+          عرض الدروس <ArrowLeft aria-hidden="true" size={16} />
         </Link>
       </div>
     );
@@ -47,7 +47,7 @@ export function HomeCourseShowcase({ courses }: { courses: Course[] }) {
 
   return (
     <>
-      <div className={styles.gradeTabs} role="group" aria-label="تصفية المساقات حسب الصف">
+      <div className={styles.gradeTabs} role="group" aria-label="تصفية الدروس حسب الصف">
         <button type="button" aria-pressed={grade === 'all'} onClick={() => setGrade('all')}>
           كل الصفوف
         </button>

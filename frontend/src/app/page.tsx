@@ -44,7 +44,7 @@ export default async function HomePage() {
         {
           id: 'start',
           question: 'هل أستطيع تجربة المنصة قبل الاشتراك؟',
-          answer: 'نعم. ابدأ بالمساقات المجانية واختبار تحديد المستوى، ثم اختر المسار المناسب لك.',
+          answer: 'نعم. ابدأ بالدروس المجانية واختبار تحديد المستوى، ثم اختر المسار المناسب لك.',
         },
         {
           id: 'mobile',
@@ -97,7 +97,7 @@ export default async function HomePage() {
             <p className={styles.sectionKicker}>ابدأ من مكانك الحقيقي</p>
             <h2>اختَر مكانك في المنهج</h2>
           </div>
-          <p>بدل كتالوج طويل، سترى صفك أولاً ثم المساقات الأنسب للحظة الحالية.</p>
+          <p>بدل كتالوج طويل، سترى صفك أولاً ثم الدروس الأنسب للحظة الحالية.</p>
         </div>
         <HomeCourseShowcase courses={coursesData.data.courses} />
       </section>
@@ -140,7 +140,7 @@ export default async function HomePage() {
                 <BadgeCheck aria-hidden="true" />
               </span>
               <div>
-                <strong>اتقن</strong>
+                <strong>أتقن</strong>
                 <p>اختبار قصير يوضح ما أتقنته وما يحتاج مراجعة.</p>
               </div>
               <small>5 د</small>
@@ -217,7 +217,7 @@ export default async function HomePage() {
           <p>منصة تعليمية عربية تجعل الخطوة التالية واضحة.</p>
         </div>
         <nav className={styles.footerLinks} aria-label="روابط التذييل">
-          <Link href="/courses">المساقات</Link>
+          <Link href="/courses">الدروس</Link>
           <Link href="/#approach">طريقة المذاكرة</Link>
           <Link href="/#faq">الأسئلة الشائعة</Link>
           <Link href="/login">دخول الطلاب</Link>

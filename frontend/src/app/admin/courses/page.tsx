@@ -12,6 +12,11 @@ type C = {
   subject: { name: string };
   _count: { modules: number; enrollments: number };
 };
+const courseStatusLabels: Record<string, string> = {
+  DRAFT: 'مسودة',
+  PUBLISHED: 'منشور',
+  ARCHIVED: 'مؤرشف',
+};
 export default function AdminCourses() {
   const [items, setItems] = useState<C[]>([]),
     [search, setSearch] = useState('');
@@ -46,7 +51,7 @@ export default function AdminCourses() {
               </small>
               <strong>{x.title}</strong>
             </div>
-            <span>{x.status}</span>
+            <span>{courseStatusLabels[x.status] ?? x.status}</span>
             <b>
               {x._count.modules} وحدات · {x._count.enrollments} طلاب
             </b>

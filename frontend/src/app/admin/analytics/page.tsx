@@ -8,6 +8,12 @@ type Revenue = {
   orders: number;
 };
 type Payments = { items: { status: string; count: number; amount: number }[] };
+const paymentStatusLabels: Record<string, string> = {
+  PENDING: 'قيد الانتظار',
+  PAID: 'مدفوع',
+  FAILED: 'فشل',
+  EXPIRED: 'منتهي',
+};
 type Engagement = {
   items: {
     course: string;
@@ -74,7 +80,7 @@ export default function AnalyticsPage() {
         </article>
         {payments?.items.map((x) => (
           <article key={x.status}>
-            <span>{x.status}</span>
+            <span>{paymentStatusLabels[x.status] ?? x.status}</span>
             <strong>{x.count}</strong>
           </article>
         ))}
@@ -111,7 +117,7 @@ export default function AnalyticsPage() {
       <Report title="حالات الدفع" onDownload={(format) => void download('payments', format)}>
         {payments?.items.map((x) => (
           <article key={x.status}>
-            <strong>{x.status}</strong>
+            <strong>{paymentStatusLabels[x.status] ?? x.status}</strong>
             <b>
               {x.amount} EGP · {x.count}
             </b>

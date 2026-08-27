@@ -8,7 +8,7 @@ import styles from './site-header.module.css';
 
 const navigation = [
   { href: '/', label: 'الرئيسية' },
-  { href: '/#courses', label: 'المساقات' },
+  { href: '/#courses', label: 'الدروس' },
   { href: '/#approach', label: 'نظام المذاكرة' },
   { href: '/#about', label: 'عن المدرّس' },
   { href: '/#faq', label: 'الأسئلة الشائعة' },
@@ -57,7 +57,7 @@ export function SiteHeader() {
         </nav>
 
         <div className={styles.actions}>
-          <Link className={styles.searchAction} href="/courses" aria-label="ابحث في المساقات">
+          <Link className={styles.searchAction} href="/courses" aria-label="ابحث في الدروس">
             <Search aria-hidden="true" size={19} strokeWidth={1.9} />
           </Link>
           <Link className={styles.loginAction} href="/login">
@@ -100,7 +100,7 @@ export function SiteHeader() {
             <div className={styles.mobileActions}>
               <Link href="/courses" onClick={closeMenu}>
                 <Search aria-hidden="true" size={18} />
-                ابحث في المساقات
+                ابحث في الدروس
               </Link>
               <Link href="/login" onClick={closeMenu}>
                 <LogIn aria-hidden="true" size={18} />

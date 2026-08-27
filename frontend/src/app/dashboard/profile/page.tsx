@@ -107,7 +107,7 @@ export default function ProfilePage() {
                   (
                     {
                       emailPayments: 'بريد المدفوعات',
-                      emailCourseUpdates: 'بريد تحديثات المساقات',
+                      emailCourseUpdates: 'بريد تحديثات الدروس',
                       emailQuizResults: 'بريد نتائج الاختبارات',
                       inAppPayments: 'مدفوعات داخل المنصة',
                       inAppCourseUpdates: 'تحديثات داخل المنصة',

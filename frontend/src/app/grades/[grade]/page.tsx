@@ -14,7 +14,7 @@ export default async function GradePage({ params }: { params: Promise<{ grade: s
     <main>
       <SiteHeader />
       <section className="listing-hero">
-        <p className="section-kicker">دليل المساقات</p>
+        <p className="section-kicker">دليل الدروس</p>
         <h1>{selected?.name ?? 'كل المراحل'}</h1>
         <p>اختر المساق الذي يطابق منهجك، ثم راجع تفاصيله قبل الاشتراك.</p>
       </section>
